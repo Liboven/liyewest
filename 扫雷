@@ -1,0 +1,113 @@
+import random
+
+def coordinate(x,y):
+    return str(x)+','+str(y)
+
+class unit:
+    kind=num=note=condition=0
+
+    def __init__(self,kind):
+        self.kind=kind
+
+class board:
+    grid,level={},1
+    def __init__(self,level,count):
+        self.level,o=level,0
+        if level==1:
+            o=8
+        elif level==2:
+            o=16
+        else:
+            o=24
+        if True:
+            i=1
+            u=[]
+            while i<=o*o-count:
+                u,i=u+[0],i+1
+            while count>=1:
+                u,count=u+[1],count-1
+            random.shuffle(u)
+            i=1
+            while i<=o:
+                m=1
+                while m<=o:
+                    a=()
+                    self.grid[coordinate(m,i)]=unit(u[(i-1)*9+m-1])
+                    m=m+1
+                i=i+1
+            i=1
+            while i<=o:
+                m=1
+                while m<=o:
+                    self.grid[coordinate(m,i)].num=self.emmmm(m+1,i-1)+self.emmmm(m+1,i)+self.emmmm(m+1,i+1)+self.emmmm(m,i-1)+self.emmmm(m,i+1)+self.emmmm(m-1,i-1)+self.emmmm(m-1,i)+self.emmmm(m-1,i+1)
+                    m=m+1
+                i=i+1
+
+    def emmmm(self,x,y):
+        if coordinate(x,y) in self.grid:
+            if self.grid[coordinate(x,y)].kind==1:
+                return 1
+            else:
+                return 0
+        else:
+            return 0
+
+    def showboard(self):
+        if self.level==1:
+            y=1
+            while y<=9:
+                x=1
+                while x<=9:
+                    if self.grid[coordinate(x,y)].kind==1:
+                        print('B',end='  ')
+                    else:
+                        print(self.grid[coordinate(x,y)].num,end='  ')
+                    x=x+1
+                print('')
+                y=y+1
+
+    def printboard(self):
+        if self.level==1:
+            y=1
+            while y<=9:
+                x=1
+                while x<=9:
+                    if self.grid[coordinate(x,y)].condition==1:
+                        if self.grid[coordinate(x,y)].kind==1:
+                            print('B',end='  ')
+                        else:
+                            print(self.grid[coordinate(x,y)].num,end='  ')
+                    else:
+                        print('N',end='  ')
+                    x=x+1
+                print('')
+                y=y+1
+
+    def dig(self,x,y):
+        if coordinate(x,y) in self.grid:
+            if self.grid[coordinate(x,y)].kind==1 or self.grid[coordinate(x,y)].num!=0 or self.grid[coordinate(x,y)].condition==1:
+                self.grid[coordinate(x,y)].condition=1
+            else:
+                self.grid[coordinate(x,y)].condition=1
+                self.dig(x+1,y+1)
+                self.dig(x+1,y)
+                self.dig(x+1,y-1)
+                self.dig(x,y-1)
+                self.dig(x,y+1)
+                self.dig(x-1,y+1)
+                self.dig(x-1,y)
+                self.dig(x-1,y-1)
+
+    def flag(self,x,y):
+        self.grid[coordinate(x,y)].note=1
+
+    def showgrid(self,x,y):
+        if self.grid[coordinate(x,y)].condition==0:
+            if self.grid[coordinate(x,y)].note==1:
+                return 'F'
+            else:
+                return ' '
+        if self.grid[coordinate(x,y)].kind==1:
+            return 'X'
+        if self.grid[coordinate(x,y)].kind==0:
+            return str(self.grid[coordinate(x,y)].num)
